@@ -1,0 +1,30 @@
+#  Template NodeJS Web Application for Azure Web App service
+
+#  This template allows you to deploy your NodeJS web application to Azure Web App Service.
+#  The workflow allows running tests, code linting and security scans on feature branches (as well as master).
+#  The NodeJS application will be validated after the code is merged to master and deployment can be triggered manually.
+
+# Prerequisites: $$AZURE_APP_ID, $AZURE_PASSWORD, $AZURE_TENANT_ID, $AZURE_RESOURCE_GROUP, $AZURE_APP_NAME setup in the Deployment variables.
+# For advanced cases, please, follow examples from the pipe's README https://bitbucket.org/microsoft/azure-web-apps-deploy/src/1.0.3/README.md
+
+
+image:
+  name: 953927275323.dkr.ecr.eu-west-3.amazonaws.com/but-serverless-deploy:07122021
+  aws:
+    access-key: $AWS_ACCESS_KEY_ID
+    secret-key: $AWS_SECRET_ACCESS_KEY
+
+pipelines:
+  branches:
+    staging:
+      - step:
+          name: Deploy Staging to AWS Serverless
+          caches:
+            - node
+          script:
+            - cd /app/nextjs_frontend
+            - npm install
+            - cd /app/nextjs_frontend/deploy/staging
+            - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            - serverless --debug
